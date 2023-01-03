@@ -4,6 +4,8 @@
 // let navbar = $("#navbar")
 // console.log('navbar', navbar)
 
+
+
 let disableAnchorTags = () => {
     // inner function / local
     let menuAnchorClickHandler = (ev, el) => {
@@ -12,18 +14,13 @@ let disableAnchorTags = () => {
         ev.preventDefault() // stop browser loading page/link/anchor
         
         let a = ev.target
-        console.log('target', a.href)
-
-        get(a.href, data => {
-            console.log('a href', data)
-            let canvas = $("#canvas")
-            canvas.innerHTML = data
-        })
+        // console.log('target', a.href)
+        insertHtmlFromUrl(a.href, "#canvas")
     }
 
     let tags = $('a')
     for(let tag of tags) {
-        console.log('a', tag)
+        // console.log('a', tag)
         tag.addEventListener("click", menuAnchorClickHandler)
     }
 
@@ -31,7 +28,7 @@ let disableAnchorTags = () => {
 
 disableAnchorTags()
 
-let ev = new Event('script-loaded')
-document.dispatchEvent(ev)
+// let ev = new Event('script-loaded')
+// document.dispatchEvent(ev)
 
 

@@ -1,4 +1,35 @@
 
+<script>
+    (() => {
+        console.log('this is IIFE in test')
+        // console.log('loading test....')
 
-<h1>This is Test</h1>
+        // on('loaded', () => {
+        //     console.log('test.html loaded', this)
+        // })
+
+        // emit('loaded')
+
+        on("DomReady", (dom, $, $$) => {
+            console.log('dom', dom, $)
+            // now we want to bind our selector $ function to just this scope (ie jost local elements)
+            // let $$ = $  // save the original
+            // $ = (selector) => $$(selector, dom)
+
+            console.log('this is a local element with same id as global', $('#canvas'))
+            console.log('this is a global element with same id as global', $$('#canvas'))
+
+
+
+        })  
+
+
+    })()
+
+
+
+
+
+</script>
+<h1 id="canvas-this-will-break-css">This is Test</h1>
     

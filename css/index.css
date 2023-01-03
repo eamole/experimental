@@ -1,3 +1,25 @@
 div {
-    font-size: 90px;
+    font-size: 12px;
+}
+
+.container {
+    width: 90%;
+    height: 90vh;
+    padding:10px;
+    border: 1px solid darkgray; 
+}
+
+#sidebar {
+    display:table-cell;
+    width: 9%;
+    height: 90vh;
+    border: 1px solid lightgray;
+    margin: 3px;
+}
+#canvas {
+    display: table-cell;
+    width: 89%;
+    height: 90vh;
+    border: 1px solid lightgray;
+    margin: 3px;
 }

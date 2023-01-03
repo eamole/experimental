@@ -7,14 +7,12 @@ window.addEventListener('DOMContentLoaded', ()=>{
 
 })
 
-let $ = (selector) => {
-    let els = document.querySelectorAll(selector)
+let $ = (selector, el = document) => {
+    let els = el.querySelectorAll(selector)
     // if its an ID selector
     if(selector[0] == "#") els = els[0] // only return the first element - should only be one!!
     return els  // either a NodeList, or just one!!
 }
-
-
 
 let get = (url, callback) => {
 
@@ -44,32 +42,17 @@ let loadPage = (folder) => {
             el.innerHTML = html
 
             url = folder + "/" + json.js
-            insertScript(url)
-
+            insertScriptFromUrl(url)
+            emit('DomReady', el)
         })
 
     })
-
-
-}
-let insertScript = (url) => {
-
-    let tag = document.createElement("script")  // dynamically create DOM elements
-    tag.setAttribute('src', url)  // causes a load event when attached to DOM
-    tag.setAttribute('type', 'text/javascript')
-    document.body.appendChild(tag)
-
-    tag.addEventListener('load', () => {
-        console.log('script loaded')
-    })
-
-    document.addEventListener('script-loaded', (ev, el) => {
-        console.log('script-loaded', ev, el)
-
-    })
 }
 
-
+/*
+    should this be here?
+    it probably should be in nav.js/html, if it hasn't been superceded already
+*/
 let insertMenu = () => {
     get('/nav/index.html', html => {
         
@@ -79,6 +62,76 @@ let insertMenu = () => {
         
         disableAnchorTags()
 
+    })
+}
+
+
+let insertScriptFromUrl = (url) => {
+
+    let tag = document.createElement("script")  // dynamically create DOM elements
+    tag.setAttribute('src', url)  // causes a load event when attached to DOM
+    tag.setAttribute('type', 'text/javascript')
+    document.body.appendChild(tag)
+
+}
+
+let insertScriptFromText = (script) => {
+
+    let tag = document.createElement("script")  // dynamically create DOM elements
+    tag.setAttribute('type', 'text/javascript')
+    tag.textContent = script
+    document.body.appendChild(tag)
+
+}
+
+let insertHtmlFromUrl = (url, selector) => {
+    
+    get(url, data => {
+        // console.log('a href', data)
+        let container = $(selector)
+        container.innerHTML = data
+
+        // now extract the script tags
+        extractScriptTags(canvas)
+
+        emit('DomReady', container)
+
+    })
+
+}
+/*
+    this removes script tags from a newly inserted HTML fragment, because they will not run
+    must create script tag elements dynamically, and attach them to DOM
+*/
+let extractScriptTags = (container) => {
+
+    let scripts = $('script', container)
+    // console.log('scripts', scripts)  
+    let jsCode = scripts[0].text    // assume single script
+    scripts[0].remove() // avoid duplicate function defintions
+    insertScriptFromText(jsCode)
+    // now pass container (the local DOM) to the newly created script
+
+}
+
+
+
+let emit = (event, scope) => {
+    console.log('shoukd dispatch event', event)
+    let ev = new CustomEvent(event, {detail: {scope}})
+    window.dispatchEvent(ev)
+}
+
+let on = (event, callback) => {
+    console.log('adding custom event handler ', event)
+    
+    window.addEventListener(event, (ev) => {
+        console.log('custom event handler called', ev)
+        let dom = ev.detail.scope
+        let global = $
+        let local = (selector) => global(selector, dom) // bind it to local dom 
+
+        callback(dom, local, global)
     })
 }
 
