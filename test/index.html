@@ -1,35 +1,49 @@
+<!-- this is a HTML/JS/CSS fragment -->
+
+<!-- this is a simplistic MVC model Model/View/Controller 
+    Model = data (JSON data from server)
+    View = GUI/HTML/Visuals (HTML/CSS/JS)
+    Controller = Logic / Business Logic, Animation, Validation (JS)
+
+-->
+
+<h1 id="canvas-this-will-break-css">This is Test</h1>
+A sample value <input id="counter" type="number" value="" />
+<button>Increment</button>
+
 
 <script>
-    (() => {
-        console.log('this is IIFE in test')
-        // console.log('loading test....')
 
-        // on('loaded', () => {
-        //     console.log('test.html loaded', this)
-        // })
+    on("DomReady", (dom, $, $$) => { // dom == the small fragment just inserted
+        console.log('dom', dom, $, $$)
+        // now we want to bind our selector $ function to just this scope (ie jost local elements)
+        // let $$ = $  // save the original
+        // $ = (selector) => $$(selector, dom)
 
-        // emit('loaded')
+        console.log('this is a local element with same id as global', $('#canvas'))
+        console.log('this is a global element with same id as global', $$('#canvas'))
 
-        on("DomReady", (dom, $, $$) => {
-            console.log('dom', dom, $)
-            // now we want to bind our selector $ function to just this scope (ie jost local elements)
-            // let $$ = $  // save the original
-            // $ = (selector) => $$(selector, dom)
+        let data = {
+        }
 
-            console.log('this is a local element with same id as global', $('#canvas'))
-            console.log('this is a global element with same id as global', $$('#canvas'))
+        let counter = $('#counter')
+        valueBinder("#counter", data, "someValue") // declare a new data property
+        counter.addEventListener("change", (ev) => { // listen for DOM input element change
+            data.someValue = Number(ev.target.value)    // all DOM is text
+            console.log('data changed', data)
+        })
 
-
-
-        })  
-
-
-    })()
+        let btn = $('button')[0]    // only one element - change $ to return the element if only 1 in list
+        btn.addEventListener('click', () => data.someValue ++ ) // single line function
 
 
+
+
+    })  
 
 
 
 </script>
-<h1 id="canvas-this-will-break-css">This is Test</h1>
+
+
     

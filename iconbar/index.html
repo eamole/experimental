@@ -1,0 +1,33 @@
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/iconbar/horiz.css" id="style">
+
+
+<div class="icon-bar">
+    <a class="active" href="#"><i class="fa fa-home"></i></a>
+    <a href="#"><i class="fa fa-search"></i></a>
+    <a href="#"><i class="fa fa-envelope"></i></a>
+    <a href="#"><i class="fa fa-globe"></i></a>
+    <a href="#"><i class="fa fa-trash"></i></a>
+</div>
+
+<button id="button">Switch Styles</button>
+
+<script>
+
+    on('DomReady', (dom) => {
+        console.log('dom', dom)
+        let btn = $("#button", dom)  // search locally
+        btn.addEventListener("click", () => {
+            let css = $("#style", dom)  // again, search locally
+            console.log('href', css.href)
+            let baseUrl = "http://localhost:8080/iconbar/"
+            if (css.href == baseUrl + "horiz.css") css.href = baseUrl + "vertical.css"
+            else css.href = baseUrl + "horiz.css"
+
+        })
+
+    })
+
+</script>
+

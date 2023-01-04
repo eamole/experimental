@@ -1,12 +1,9 @@
-// alert('hello')  // this is a Modal - it blocks the thread
-// debugger
-// console.log('navbar', navbar)   // ??? where is this navbar coming from???????
-// let navbar = $("#navbar")
-// console.log('navbar', navbar)
 
-
-
-let disableAnchorTags = () => {
+/*
+    attach handler to each anchor tag, disable default link following (preventDefault), and use
+    JS to load the specified content
+*/
+let captureAnchorTags = () => {
     // inner function / local
     let menuAnchorClickHandler = (ev, el) => {
         // console.log('menu click ev', ev, el)
@@ -17,8 +14,8 @@ let disableAnchorTags = () => {
         // console.log('target', a.href)
         insertHtmlFromUrl(a.href, "#canvas")
     }
-
-    let tags = $('a')
+    let navbar = $("#navbar")   // get the navbar container
+    let tags = $('a', navbar)   // TODO: this is EVERY anchor tag on the page - Done!! added navbar scope
     for(let tag of tags) {
         // console.log('a', tag)
         tag.addEventListener("click", menuAnchorClickHandler)
@@ -26,7 +23,7 @@ let disableAnchorTags = () => {
 
 }
 
-disableAnchorTags()
+captureAnchorTags() // TODO: this would be better as an IIFE
 
 // let ev = new Event('script-loaded')
 // document.dispatchEvent(ev)

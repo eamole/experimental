@@ -1,0 +1,75 @@
+<script>
+
+
+on("DomReady", (dom, $) => {
+    console.log('promises', dom, $)
+    // let's try to make $ a Promise ready function - so we can chain functions together
+    
+    let $$ = $  // save the old definition of $
+
+    $ = (selector) => { // new def - apply DOM scope, and use Promises
+        let els = $$(selector, dom) // bind the $ to just the local dom for search
+        console.log('els', selector, els)
+        return new Promise((resolve, reject) => {
+            if(els.length == 0) reject("No elements found for selector " + selector)
+            if(els.length == 1) resolve(els[0]) // remove NodeList and return element
+            resolve(els)    // return nodelist
+        })
+    }
+
+    $('#run').then(el => {
+        console.log('run el', el)
+        el.addEventListener('click', runStuff)        
+    })
+
+    let runStuff = () => {
+        $("h1").then((el) => console.log('tag', el))
+        
+        $("#a-div").then(el => {
+            console.log('id', el) 
+            return P(el)
+        }).then( el => console.log('multi el', el))
+        
+        
+        $(".list-item").then(els => {
+            console.log('iterable?', els)
+            for(el of els) console.log('el', el)
+            return P(els)
+        })
+        .then( els => {
+            for (el of els) {
+                el.innerText += " changed"
+            }
+            return P(els)
+        })
+        .then( els => {
+            console.log("we can continue to work on els", els)
+            console.log("or we can return a system genarted promise")
+            return fetch("/promise/fragment.html")
+        })
+        .then(resp => resp.text())  // text() is promise based
+        .then(html => console.log('Ultimately - the html', html))
+    }
+
+    let runCustomPromise = () => {
+
+        
+
+    }
+
+
+})
+
+</script>
+
+<h1>This is the header</h1>
+<div id="a-div">this is an id div</div>
+<div id="container">
+    <ul class="list">
+        <li class="list-item">One</li>
+        <li class="list-item">Two</li>
+        <li class="list-item">Three</li>
+    </ul>
+</div>
+<button id="run">Run The Code</button>
+<button id="run-custom-promise">Run Custom Promise</button>

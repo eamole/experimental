@@ -1,9 +1,43 @@
+<!-- This is a menu -->
+<div id="navbar">
+    <a href="/">Home</a>
+    <a href="/test">Test</a>
+    <a href="/promise">Promises...promises</a>
+    <a href="#el3">El 3</a>
+    
+</div>
 
-    <!-- This is a menu -->
-    <nav id="navbar">
-        <a href="/">Home</a>
-        <a href="/test">Test</a>
-        <a href="#el2">El 2</a>
-        <a href="#el3">El 3</a>
-        
-    </nav>
+<script>
+
+    /*
+        attach handler to each anchor tag, disable default link following (preventDefault), and use
+        JS to load the specified content
+    */
+    let captureAnchorTags = (scope = "#navbar", target ="#canvas") => {
+        // inner function / local
+        let menuAnchorClickHandler = (ev, el) => {
+            // console.log('menu click ev', ev, el)
+
+            ev.preventDefault() // stop browser loading page/link/anchor
+            
+            let a = ev.target
+            // console.log('target', a.href)
+            insertHtmlFromUrl(a.href, "#canvas")
+        }
+
+        let navbar = $("#navbar")   // get the navbar container
+        let tags = $('a')   // TODO: this is EVERY anchor tag on the page - Done!! added navbar scope
+        for(let tag of tags) {
+            // console.log('a', tag)
+            tag.addEventListener("click", menuAnchorClickHandler)
+        }
+
+    }
+
+    captureAnchorTags() // TODO: this would be better as an IIFE
+
+    // let ev = new Event('script-loaded')
+    // document.dispatchEvent(ev)
+
+</script>
+

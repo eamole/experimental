@@ -1,0 +1,37 @@
+<script>
+
+
+// redefine our "get" to work with Promises instead of callbacks - note no callback - use then
+get = (url) => {
+    // have a look at the "insertMenu" function in the project script.js - how xhr uses a callback
+    let xhr = new XMLHttpRequest()
+
+    // but JS continues to execute with out waiting for anything - so we need to "hook" the reponse when it comes
+    xhr.open("GET", url)
+    xhr.send()
+
+    // at this stage - the xhr request has gone, but we are about to return - some we return a Promise
+    // we provide custom success and error handlers - and return the promise - not the result of the request
+    // you can no use the promise...then to capture the reponse, when it happens
+    return new Promise((resolve, reject) => {
+        // define the reponse handler - inside the promise
+        xhr.onload = () => {    // hook the load event - no parameters!!
+            resolve(xhr.responseText)
+        }
+        // no error handling
+    })
+}
+
+get("/promise/fragment.html")
+.then(html => {
+    console.log("Promise v Callback", html)
+    return P(html)
+})
+.then( html => {
+    let el = $('#mini-app') // this should really be a Promise - so we can chain
+    el.innerHTML = html
+})
+
+</script>
+<div id="mini-app"></div>
+
