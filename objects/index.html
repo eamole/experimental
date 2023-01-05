@@ -1,0 +1,81 @@
+<script>
+    'use strict'
+    // JS lieteral object - looks like JSON
+    let eamonn = {
+        name: "Eamonn",
+        age: 57,
+        country: "IE",
+    }
+    console.log('eamonn', eamonn)
+
+    let employees = [eamonn]
+    employees.push({    // add another employee
+        name: "Maria",
+        age: 37,
+        country: "ES"
+    })
+    console.log('employees', employees)
+
+    eamonn.age = 60
+    eamonn.city = 'Cork'
+
+    let employee = (name, age, country) => {    // anon arrow function - constructor type function
+
+        let hello = (text) => {
+            console.log(`hello, my name is ${name}`)
+        }
+        return {
+            name, 
+            age,
+            country,
+            hello,
+        }
+    }
+    employees = []
+    employees.push(employee("Eamonn", 57, "IE"))
+    employees.push(employee("Maria", 37, "ES"))
+    console.log("employees", employees)
+    eamonn = employees[0]   // the first element
+
+    eamonn.hello()
+
+    function Employee(name, age, country) {
+
+        this.name = name
+        this.age = age
+        this.country = country
+        this.hello = (text) => {
+            console.log(`hello, my name is ${this.name}`)
+        }
+
+    }
+
+    employees = []
+    employees.push(new Employee("Eamonn", 57, "IE"))
+    employees.push(new Employee("Maria", 37, "ES"))
+    console.log("employees", employees)
+    eamonn = employees[1]   // the first element
+
+    eamonn.hello()
+
+    class Worker {      // ES2015
+        constructor (name, age, country) {
+            this.name = name
+            this.age = age
+            this.country = country
+            this.hello = (text) => {
+                console.log(`hello, my name is ${this.name}`)
+            }
+        }
+    }
+
+    employees = []
+    employees.push(new Worker("Eamonn", 57, "IE"))
+    employees.push(new Worker("Maria", 37, "ES"))
+    console.log("workers", employees)
+    employees[1].hello()   // the first element
+    
+
+
+
+</script>

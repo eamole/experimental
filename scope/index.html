@@ -1,0 +1,101 @@
+<h1>Scope</h1>
+In Javascript there are 2 types of Scope
+<ul>
+    <li>Global</li>
+    <li>Local/Function</li>
+</ul>
+<div>
+Scope is a dictionary into which all variables and functions are loaded. All names/identifiers must be unique
+In javascript, reusing a variable name/identifier overwrites the previos value - no error/silent
+</div>
+<div>
+In javascript, thenfirst reference to a variable declares the variable, if not alreay defined - which is dangerous
+</div>
+<div>
+    functions defined using the <i>function statement</i> syntax
+    <pre>
+        function myFunction() {}
+    </pre>
+    are "hoisted" ie they are defined before any other code runs
+    <br>
+    functions defined using`<i>function expression</i> syntax
+    <pre>
+        var myFunction = function() {}
+    </pre>
+    are executed and treated like normal sequentially executed code statements
+</div>
+
+<div>
+    undeclared variables are auto in the global scope ie <i>window</i> object
+</div>
+
+<script>
+'use strict'
+
+function this_is_the_parent() {
+
+    function this_is_the_child(){
+        for(let i = 1; i <= 3; i++) {
+            console.log('inner function', i)
+        }
+        return 100000000000
+    }
+
+    for(let i=1; i <= 3; i++) {
+        console.log('parent function', i, this_is_the_child())
+    }
+}
+
+this_is_the_parent()
+
+console.log('is i stored here?', i) // this now causes an error
+
+
+</script>
+
+<!-- 
+
+// js parseer treats fun ction declarations differently - they are "hoisted".
+function something() {  // note: same name as variable. What will happen? Function name treated diff by JS
+    console.log('This is something - func dec')
+    return "something function declaration"
+}
+console.log('something 1', something, something()) // diff between function and variable????
+
+something = "Tom"   // create a variable without declaration -> global scope
+console.log('something 2', something)
+
+var something = function() {    // note: same name as Tom var. What will happen?
+    console.log('This is something - func exp')
+    return "function expression"
+}
+console.log('something 3', something, something()) // something is now a function
+
+
+
+
+this_is_a_variable = 'this is a variable'   // global variables are attached to the window object, and the window object is the default/global scope
+// anything attached to the window object does not need the window reference ie
+// these things can be referenced directly
+window.console.log('global1:where is my variable', this_is_a_variable, window.this_is_a_variable)
+
+function this_is_a_function() {
+    var this_is_another_variable = "this is another variable"   // any variable with var/let/const is auto 
+    // global!!  ALWAYS USE VAR/LET/CONST preference is LET
+    console.log('this_is_a_function:is this valid? ', this_is_a_variable, this_is_another_variable)
+
+    function this_is_an_inner_function() {
+        console.log('inner_function: is this valid? ', this_is_a_variable, this_is_another_variable)
+
+    }
+    this_is_an_inner_function()
+
+}
+this_is_a_function()
+
+console.log('global 2:is this valid? ', this_is_a_variable, this_is_another_variable) // will this cause an error
+
+
+
+
+ -->

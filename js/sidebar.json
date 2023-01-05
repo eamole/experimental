@@ -3,5 +3,9 @@
     {"name": "Promises...promises", "url": "/promise"},
     {"name": "Promise v Callback", "url": "/promise-v-callback"},
     {"name": "IconBar", "url": "/iconbar"},
-    {"name": "Accordion", "url": "/accordion"}
+    {"name": "Accordion", "url": "/accordion"},
+    {"name": "Scope", "url": "/scope"},
+    {"name": "Protection", "url": "/protection"},
+    {"name": "Receiver", "url": "/receiver"},
+    {"name": "Objects", "url": "/objects"}
 ]

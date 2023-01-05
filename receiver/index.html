@@ -1,0 +1,18 @@
+<!-- This receivres the SMS from Protection -->
+
+<script>
+'use strict'
+
+if(!window.webcetb) window.webcetb = {}
+
+on("DomReady", () => {
+
+    console.log('Receiver...waiting for SMS')
+    on("SMS-Sent", () => {
+        console.log('SMS received', webcetb.sms)
+
+    })
+
+})
+
+</script>

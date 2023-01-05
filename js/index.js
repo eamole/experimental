@@ -26,20 +26,21 @@ let $ = (selector, scope = document) => {
 
 let get = (url, callback) => {
 
-    console.log('This is get()', url)
+    // console.log('This is get()', url)
     fetch(url)  // built in JS function - returns a Promise
     .then( response => { 
+        // console.log('this is fetch finishing')
         if (!response.ok) throw new Error(`HTTP Error: ${url} ${response.statusText}`)
         return response.text() 
     })
     .then( data => callback(data) ) // change this to handle a returned promise if no callback provided
     .catch(err => console.error(err))
     // nothing returns from here
-    console.log('This function will have finished before fetch finishes!!')
+    // console.log('This function will have finished before fetch finishes!!')
 }
 
 let loadNav = (url = "/nav", target = "#nav-container") => {
-    console.log('Loading Nav Bar')
+    // console.log('Loading Nav Bar')
     // if(typeof target == "string") target = $(target)
     insertHtmlFromUrl(url, target)
 }
@@ -134,22 +135,22 @@ let extractScriptTags = (container) => {
 
 
 
-let emit = (event, scope) => {
-    console.log('should dispatch event', event)
-    let ev = new CustomEvent(event, {detail: {scope}})
+let emit = (event, scope, cargo) => {
+    // console.log('should dispatch event', event)
+    let ev = new CustomEvent(event, {detail: {scope, cargo}})
     window.dispatchEvent(ev)
 }
 
 let on = (event, callback) => {
-    console.log('adding custom event handler ', event)
+    // console.log('adding custom event handler ', event)
     
     window.addEventListener(event, (ev) => {
-        console.log('custom event handler called', ev)
+        // console.log('custom event handler called', ev)
         let dom = ev.detail.scope
         let global = $
         let local = (selector) => global(selector, dom) // bind it to local dom 
 
-        callback(dom, local, global)
+        callback(dom, local, global, ev.detail)
     })
 }
 
@@ -168,7 +169,7 @@ let valueBinder = (el, data, prop) => {
 }
 
 let loadSidebar = (el = "#sidebar") => {
-    console.log('should load sidebar')
+    // console.log('should load sidebar')
     get("/js/sidebar.json", text => {
         let pages = JSON.parse(text)
         // now iterate over the sidebar json and render the side bar html
