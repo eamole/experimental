@@ -10,19 +10,21 @@
     }
 </style>
 <script>
+        
+    window.googleLocation = null// map a global variable for google maps
 
     let getLocation = (callback) => {
-        console.log('is this being called?')
         if(!navigator.geolocation) {
             $("#info").innerText = "This browser does not support Geolocation"
             return
         }
         navigator.geolocation.getCurrentPosition((location)=>{  // async func - needs a callback
+            window.googleLocation = location
             console.log('location', location)
             callback(location)
         })        
     }
-
+    let isGoogleMapsApiLoaded = false   // prevent multiple loads
     let $btn = $("#get")
     $btn.addEventListener('click', () => {
         
@@ -31,22 +33,27 @@
                 <span>Latitude: ${location.coords.latitude}</span>
                 <span>Longitude: ${location.coords.longitude}</span>
             `
-            insertScriptFromUrl("https://maps.googleapis.com/maps/api/js?key=AIzaSyBB_pf1WOVGDYQhs8UOvMy1Af9VLl2NGyk&callback=myMap")
+            if (!isGoogleMapsApiLoaded) {
+                // this displays the map immediately!!
+                insertScriptFromUrl("https://maps.googleapis.com/maps/api/js?key=AIzaSyBB_pf1WOVGDYQhs8UOvMy1Af9VLl2NGyk&callback=myMap")
+                isGoogleMapsApiLoaded = true
+            }
+            
         })
     })
 
     let googleMap = $("#google-map")
 
     window.myMap = () => {
-        getLocation((location) => {
+        // getLocation((location) => {
             console.log('google.maps', googleMap, google.maps)
             let mapProp= {
-                center:new google.maps.LatLng(location.coords.latitude,location.coords.longitude),
+                center:new google.maps.LatLng(googleLocation.coords.latitude,googleLocation.coords.longitude),
                 zoom:15,
             }
             let map = new google.maps.Map(googleMap, mapProp)
 
-        })
+        // })
     }
 
 

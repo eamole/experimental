@@ -40,11 +40,11 @@ let get = (url, callback) => {
 }
 
 let loadNav = (url = "/nav", target = "#nav-container") => {
-    console.log('Loading Nav Bar')
+    // console.log('Loading Nav Bar')
     // if(typeof target == "string") target = $(target)
     insertHtmlFromUrl(url, target, () => {
         captureAnchorTags(target, (ev) => {
-            console.log('a click captured')
+            // console.log('a click captured')
             anchorClickHandler(ev, '#canvas')
         })
     })
@@ -70,7 +70,7 @@ let loadSidebar = (target = "#sidebar") => {
         let $sidebar = $(target)
         $sidebar.innerHTML = html 
         captureAnchorTags(target, (ev) => {
-            console.log('a click captured')
+            // console.log('a click captured')
             anchorClickHandler(ev, '#canvas')
         })
  
@@ -121,7 +121,7 @@ let captureAnchorTags = (selector, clickHandler) => {
     // inner function / local
     let scope = $(selector)   // get the navbar container
     let tags = $('a', scope)   // TODO: this is EVERY anchor tag on the page - Done!! added navbar scope
-    console.log('capturing anchor tags', tags)
+    // console.log('capturing anchor tags', tags)
     for(let tag of tags) {
         // console.log('a', tag)
         tag.addEventListener("click", clickHandler)
@@ -160,7 +160,7 @@ let scriptWrapper = (script) => {
     let wrapper = `
         window.moduleWrapperFunction = (dom, $, $$, url) => {
             let exports = {}
-            console.log("This is the Module Wrapper Function", url)
+            // console.log("This is the Module Wrapper Function", url)
             ${script}
             return exports
         }
