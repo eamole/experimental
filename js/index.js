@@ -40,10 +40,43 @@ let get = (url, callback) => {
 }
 
 let loadNav = (url = "/nav", target = "#nav-container") => {
-    // console.log('Loading Nav Bar')
+    console.log('Loading Nav Bar')
     // if(typeof target == "string") target = $(target)
-    insertHtmlFromUrl(url, target)
+    insertHtmlFromUrl(url, target, () => {
+        captureAnchorTags(target, (ev) => {
+            console.log('a click captured')
+            anchorClickHandler(ev, '#canvas')
+        })
+    })
+    
 }
+
+let loadSidebar = (target = "#sidebar") => {
+    // console.log('should load sidebar')
+    get("/js/sidebar.json", text => {
+        let pages = JSON.parse(text)
+        // now iterate over the sidebar json and render the side bar html
+        let html = "<ul>"
+
+        pages.forEach(page => {
+            let link = "<li>"
+                link += `<a href="${page.url}">${page.name}</a>`
+            link += "</li>"
+            html += link
+        })
+        html += "</ul>"
+
+        // inject the html
+        let $sidebar = $(target)
+        $sidebar.innerHTML = html 
+        captureAnchorTags(target, (ev) => {
+            console.log('a click captured')
+            anchorClickHandler(ev, '#canvas')
+        })
+ 
+    })
+} 
+
 /*
     custom page loader
     uses a json file to define the bits to load
@@ -84,6 +117,28 @@ let insertMenu = () => {
     })
 }
 
+let captureAnchorTags = (selector, clickHandler) => {
+    // inner function / local
+    let scope = $(selector)   // get the navbar container
+    let tags = $('a', scope)   // TODO: this is EVERY anchor tag on the page - Done!! added navbar scope
+    console.log('capturing anchor tags', tags)
+    for(let tag of tags) {
+        // console.log('a', tag)
+        tag.addEventListener("click", clickHandler)
+    }
+
+}
+
+let anchorClickHandler = (ev, htmlTarget) => {
+    // console.log('menu click ev', ev, el)
+
+    ev.preventDefault() // stop browser loading page/link/anchor
+    
+    let a = ev.target
+    // console.log('target', a.href)
+    insertHtmlFromUrl(a.href, htmlTarget)
+}
+
 
 let insertScriptFromUrl = (url) => {
 
@@ -94,27 +149,54 @@ let insertScriptFromUrl = (url) => {
 
 }
 
+/*
+
+    wrap the code we will insert into the DOM in a function so that it will not pollute
+    the global name space, and will immediately run after insertion
+
+*/
+let scriptWrapper = (script) => {
+
+    let wrapper = `
+        window.moduleWrapperFunction = (dom, $, $$, url) => {
+            let exports = {}
+            console.log("This is the Module Wrapper Function", url)
+            ${script}
+            return exports
+        }
+    `
+    return wrapper
+
+}
+
 let insertScriptFromText = (script) => {
 
     let tag = document.createElement("script")  // dynamically create DOM elements
     tag.setAttribute('type', 'text/javascript')
-    tag.textContent = script
+    tag.textContent = scriptWrapper(script) // wrap the code in a function
     document.body.appendChild(tag)
 
 }
 
-let insertHtmlFromUrl = (url, selector) => {
-    
+let insertHtmlFromUrl = (url, selector, callback) => {
+    window.moduleWrapperFunction = null// cear down previous "listener"
     get(url, (html) => {
         // console.log('a href', data)
         let container = $(selector)
         container.innerHTML = html  // this is the HTML fragment
         // TODO: change the address bar
         // now extract the script tags
-        extractScriptTags(selector)   // because they do not run when inserted like this
+        extractScriptTags(selector, url)   // because they do not run when inserted like this
 
-        emit('DomReady', container) // equiv of DomContentLoaded for a injected HTML node
+        let dom = $(selector)   // dom = scope of inserted HTML
+        let global = $
+        let local = (selector) => global(selector, dom) // bind it to local dom 
+
+        // emit('DomReady', container) // equiv of DomContentLoaded for a injected HTML node
         // now pass container (the local DOM) to the newly created script
+        if(window.moduleWrapperFunction) moduleWrapperFunction(dom, local, global, url)
+        if(callback) callback(dom, local, global, url)
+
     })
 
 }
@@ -122,13 +204,18 @@ let insertHtmlFromUrl = (url, selector) => {
     this removes script tags from a newly inserted HTML fragment, because they will not run
     must create script tag elements dynamically, and attach them to DOM
 */
-let extractScriptTags = (container) => {
+let loadedUrls = {} // avoid reloading existing code
+let extractScriptTags = (container, url) => {
 
     let scripts = $('script', container)
     // console.log('scripts', scripts)  
     let jsCode = scripts[0].text    // assume single script TODO: multi scripts
+    // console.log('jsCode', jsCode)
     scripts[0].remove() // avoid duplicate function definitions - remove original script from DOM
-    insertScriptFromText(jsCode)
+    if(!loadedUrls[url]) {
+        insertScriptFromText(jsCode)
+        loadedUrls[url] = true
+    }
     
 
 }
@@ -168,27 +255,6 @@ let valueBinder = (el, data, prop) => {
     })
 }
 
-let loadSidebar = (el = "#sidebar") => {
-    // console.log('should load sidebar')
-    get("/js/sidebar.json", text => {
-        let pages = JSON.parse(text)
-        // now iterate over the sidebar json and render the side bar html
-        let html = "<ul>"
-
-        pages.forEach(page => {
-            let link = "<li>"
-                link += `<a href="${page.url}">${page.name}</a>`
-            link += "</li>"
-            html += link
-        })
-        html += "</ul>"
-
-        // inject the html
-        let $sidebar = $("#sidebar")
-        $sidebar.innerHTML = html 
-
-    })
-} 
 
 let P = (result) => {   // shorthand for allow quick chaining using Promises
     return new Promise((resolve) => {

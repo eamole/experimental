@@ -1,0 +1,35 @@
+
+  <audio id="audio">      <!-- controls autoplay muted -->
+    <source src="/audio/audio01.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio> 
+  <button id="play">play</button>
+  <div id="status"></div>
+
+  <!-- <embed width="100%" src="/video/index.html" />  -->
+
+
+
+  <script>
+
+    let $audio = $("#audio")
+    let $btn = $("#play")
+    let $status = $("#status")
+
+    $btn.addEventListener('click', () => {
+        if($btn.innerText == "play") {
+            $btn.innerText = "pause"
+            $audio.play()
+        } else {
+            $btn.innerText = "play"
+            $audio.pause()
+        } 
+
+    })
+
+    $audio.onended = () => {
+        $status.innerText = "That's all folks!!!"
+    }
+
+
+  </script>

@@ -1,0 +1,17 @@
+<div>This is some text</div>
+
+<button id="load">Load</button>
+
+<iframe id="iframe" src="/iframe/iframe.html" frameborder="0"></iframe>
+
+<script>
+
+    let $btn = $("#load")
+    let $iframe = $("#iframe")
+    console.log('iframe', $iframe)
+
+    $btn.addEventListener('click', () => {
+
+        $iframe.src = "/iframe/more.html"
+    })
+</script>

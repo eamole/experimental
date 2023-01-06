@@ -5,7 +5,12 @@
     {"name": "IconBar", "url": "/iconbar"},
     {"name": "Accordion", "url": "/accordion"},
     {"name": "Scope", "url": "/scope"},
-    {"name": "Protection", "url": "/protection"},
-    {"name": "Receiver", "url": "/receiver"},
-    {"name": "Objects", "url": "/objects"}
+    {"name": "SMS Sender", "url": "/protection"},
+    {"name": "SMS Receiver", "url": "/receiver"},
+    {"name": "Objects", "url": "/objects"},
+    {"name": "Video", "url": "/video"},
+    {"name": "Audio", "url": "/audio"},
+    {"name": "Iframe", "url": "/iframe"},
+    {"name": "Image Map", "url": "/image-map"},
+    {"name": "Geolocation", "url": "/geolocation"}
 ]
