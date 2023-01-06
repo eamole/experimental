@@ -1,0 +1,156 @@
+<div id="info"></div>
+
+
+
+<script>
+    'use strict'
+
+    let renderLocalStorage = (renderFunction) => {
+        let html = "<ul>"
+        let keys = Object.keys(localStorage)
+        console.log('keys', keys)
+
+        for(let key of keys) {
+
+            let item = localStorage[key]        // ls.getItem(key)
+            console.log('item', item)
+            if(renderFunction) html += `<li> ${renderFunction(item)} </li>`
+            else html += `<li>${item}</li>` // assume it's a simple string
+        }
+
+        html += "</ul>"
+        $("#info").innerHTML = html
+
+    }
+
+    let renderPerson = (person) => {
+        console.log('person', person, typeof person)
+        person = JSON.parse(person)
+        let html = `
+            <span>Name: ${person.name}</span><span>Age: ${person.age}</span>
+        `
+        return html
+    }
+
+    if(!window.localStorage) {
+        $("#info").innerText = "Your browser does not support LocalStorage"
+        return
+    }
+    let ls = localStorage   // alias
+    
+    ls.clear()
+
+    ls.setItem('eamonn', "Eamonn Coghlan")
+    ls.setItem('maria', "Maria Alvares")
+    ls.setItem('tom', "Tom Hardy ")
+    ls.setItem('dick', "Dick Whittington")
+    ls.setItem('harriet', "Harriet Harman")
+
+    let person = ls.getItem("maria")
+    $("#info").innerText = person
+
+    $("#info").innerText += " " + ls.eamonn
+    $("#info").innerText += " " + ls['maria']
+
+    renderLocalStorage()
+    // ls.clear()
+    
+    ls.setItem('person 1', JSON.stringify({name: "Mary Quant", age: 30}) )
+    ls.setItem('person 2', JSON.stringify({name: "Marianne Faithfull", age: 30}) )
+    console.log('ls', ls)
+
+    // renderLocalStorage(renderPerson)
+
+    keys = Object.keys(ls)
+    let personKeys = []
+    console.log(keys)
+    for(let key of keys) {
+        console.log('key', key, key.startsWith('person'))
+        if(key.startsWith('person')) personKeys.push(key)
+    }
+    console.log(personKeys)
+
+    class PseudoTable {
+        constructor(name) { // name of table
+            this.name = name
+            this.id = 1     // each object will have a unique id within the "table" 
+            // look for a special key in ls for this table which will contain the last id for this table
+            this.tableLastIdKey = `tableLastId ${this.name}`
+            if(localStorage[this.tableLastIdKey]) this.id = localStorage[this.tableLastIdKey]
+            else localStorage[this.tableLastIdKey] = this.id
+        }
+
+        add (obj) {
+            this.id++
+            localStorage[this.tableLastIdKey] = this.id // save it
+
+            let key = this.name + " " + this.id
+            obj["_id"] = this.id
+            obj = JSON.stringify(obj)
+            console.log('insert key', key)
+            localStorage.setItem(key, obj)
+
+        }
+
+        get (id) {
+            let key = this.name + " " + id
+            let obj = localStorage[key]
+            obj = JSON.parse(obj)
+            return obj
+
+        }
+        getAllKeys () {
+            let allKeys = Object.keys(localStorage)
+            let keys = []
+            for(let key of allKeys) {
+                if(key.startsWith(this.name)) keys.push(key)
+            }
+            return keys
+        }
+        getAll () {
+            let keys = this.getAllKeys()
+            let objs = []
+            for(let key of keys) {
+                let obj = JSON.parse(localStorage[key])
+                objs.push(obj)
+            }
+            return objs
+        }
+
+        renderAll (renderFunction) {
+            
+        }
+    }
+
+    let personList = new PseudoTable("persons")
+    personList.add({name: "Mary Queen of Scots", age: 30})
+    personList.add({name: "King James", age: 30})
+    personList.add({name: "Ivan the Terrible", age: 30})
+    personList.add({name: "Bonnie Prince Charlie", age: 30})
+
+    console.log('who is 2?', personList.get(2))
+
+    console.log('all', personList.getAll())
+
+    let animals = new PseudoTable("animals")
+    animals.add({breed:"dog", name:"spot"})
+    animals.add({breed:"cat", name:"puss"})
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>

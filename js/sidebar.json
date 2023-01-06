@@ -12,5 +12,6 @@
     {"name": "Audio", "url": "/audio"},
     {"name": "Iframe", "url": "/iframe"},
     {"name": "Image Map", "url": "/image-map"},
-    {"name": "Geolocation", "url": "/geolocation"}
+    {"name": "Geolocation", "url": "/geolocation"},
+    {"name": "LocalStorage", "url": "/localStorage"}
 ]
