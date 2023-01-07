@@ -1,0 +1,44 @@
+<!--
+
+        some forms of embedding using
+        <embed> tag
+        insertHtmlFromUrl() // custom function - see the differences
+
+
+        lets create a layout for our proposed Shopping Cart
+-->
+
+<div class="container">
+    <div id="products">
+        <!-- display our products in here -->
+    </div>
+    <div id="cart">
+        <!-- display our cart here - on the right side -->
+    </div>
+</div>
+
+<style>
+    /* create a 2 col layout */
+    .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between; /* make 2nd column float to right */
+    }
+    #products {
+        width:50%;
+        height: 100%;
+        border: 1px solid red;  /* just to see it */
+    }
+    #cart {
+        width:30%;
+        height:100%;
+        border: 1px solid red;  /* just to see it */
+        
+    }
+</style>
+
+<script>
+    insertHtmlFromUrl("/embedding/products.html", "#products")
+
+</script>
+

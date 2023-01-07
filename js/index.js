@@ -140,12 +140,16 @@ let anchorClickHandler = (ev, htmlTarget) => {
 }
 
 
-let insertScriptFromUrl = (url) => {
-
+let insertScriptFromUrl = (url, callback) => { // optional callback
+    console.log('inserting script from URL', url)
     let tag = document.createElement("script")  // dynamically create DOM elements
     tag.setAttribute('type', 'text/javascript')
     tag.setAttribute('src', url)  // causes a load event when attached to DOM
     document.body.appendChild(tag)
+    // need to wait for loaded to fire
+    tag.onload = () => {
+        if(callback) callback()
+    }
 
 }
 
@@ -155,12 +159,14 @@ let insertScriptFromUrl = (url) => {
     the global name space, and will immediately run after insertion
 
 */
-let scriptWrapper = (script) => {
+let scriptWrapper = (script, callbackName) => {
+
+    // let {dom, local, global, url} = args
 
     let wrapper = `
-        window.moduleWrapperFunction = (dom, $, $$, url) => {
+        window.customModules.${callbackName} = (dom, $, $$, url) => {
             let exports = {}
-            // console.log("This is the Module Wrapper Function", url)
+            console.log("This is the Module Wrapper Function", "${callbackName}", url)
             ${script}
             return exports
         }
@@ -169,32 +175,45 @@ let scriptWrapper = (script) => {
 
 }
 
-let insertScriptFromText = (script) => {
+window.customModules = {_i: 0}  // use this to assign an id to each module wrapper function
+// this way we wont overwrite the callback if we load more than 1 script at a time!!
+
+let insertScriptFromText = (script, args, callback) => { // optional callback
 
     let tag = document.createElement("script")  // dynamically create DOM elements
     tag.setAttribute('type', 'text/javascript')
-    tag.textContent = scriptWrapper(script) // wrap the code in a function
+    let callbackName = "callback_" + customModules._i++
+    tag.textContent = scriptWrapper(script, callbackName) // wrap the code in a function
     document.body.appendChild(tag)
+
+    let {dom, local, global, url} = args
+
+    customModules[callbackName](dom, local, global, url) // now call the auto callback
+
+    if(callback) callback(dom, local, global, url)
 
 }
 
 let insertHtmlFromUrl = (url, selector, callback) => {
-    window.moduleWrapperFunction = null// cear down previous "listener"
+    if(!url) console.error('insertHtmlfromUrl(): <url> param not specified')
+    if(!selector) console.error('insertHtmlfromUrl(): <selector> param not specified')
+    // window.moduleWrapperFunction = null// cear down previous "listener"
     get(url, (html) => {
         // console.log('a href', data)
         let container = $(selector)
         container.innerHTML = html  // this is the HTML fragment
         // TODO: change the address bar
         // now extract the script tags
-        extractScriptTags(selector, url)   // because they do not run when inserted like this
 
         let dom = $(selector)   // dom = scope of inserted HTML
         let global = $
         let local = (selector) => global(selector, dom) // bind it to local dom 
 
+        extractScriptTags(selector, {dom, local, global, url})   // because they do not run when inserted like this
+
         // emit('DomReady', container) // equiv of DomContentLoaded for a injected HTML node
         // now pass container (the local DOM) to the newly created script
-        if(window.moduleWrapperFunction) moduleWrapperFunction(dom, local, global, url)
+        // if(window.moduleWrapperFunction) moduleWrapperFunction(dom, local, global, url)
         if(callback) callback(dom, local, global, url)
 
     })
@@ -205,15 +224,19 @@ let insertHtmlFromUrl = (url, selector, callback) => {
     must create script tag elements dynamically, and attach them to DOM
 */
 let loadedUrls = {} // avoid reloading existing code
-let extractScriptTags = (container, url) => {
-
+let extractScriptTags = (container, args) => {
+    
+    let {dom, local, global, url} = args
+    
     let scripts = $('script', container)
-    // console.log('scripts', scripts)  
+    // console.log('scripts', scripts)
+    if(!scripts[0]) return  // if there are no scripts, just return
+
     let jsCode = scripts[0].text    // assume single script TODO: multi scripts
     // console.log('jsCode', jsCode)
-    scripts[0].remove() // avoid duplicate function definitions - remove original script from DOM
-    if(!loadedUrls[url]) {
-        insertScriptFromText(jsCode)
+    scripts[0].remove() // avoid duplicate function definitions when inserting again - remove original script from DOM
+    if(!loadedUrls[url]) {  // avoid duplcate loading of code/modules. Code should run once
+        insertScriptFromText(jsCode, args)
         loadedUrls[url] = true
     }
     
@@ -255,8 +278,8 @@ let valueBinder = (el, data, prop) => {
     })
 }
 
-
-let P = (result) => {   // shorthand for allow quick chaining using Promises
+// shorthand for allow quick chaining using Promises - simply return P() from a function to chain
+let P = (result) => {   
     return new Promise((resolve) => {
         try {
             resolve(result)

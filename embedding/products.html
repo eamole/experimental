@@ -1,0 +1,20 @@
+<!-- <embed src="/embedding/products.js"> lets try embed, see if it works Nope embeds it as text!! -->
+
+<h1>Products</h1>
+
+<div id="product-list">
+
+</div>
+
+
+<script>
+    // lets grab the products from the shopping-cart example + images + products.js
+    insertScriptFromUrl("/embedding/products.js", () => {
+        console.log('after script insert!! This is running before the inserted script!!')
+        console.log('products', window.shoppingCart.products)
+
+        // entering into callback hell!! I could simply return a satisfied Promise
+        insertHtmlFromUrl("/embedding/product.html", "#product-list")
+    })
+
+</script>
