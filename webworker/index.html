@@ -1,0 +1,24 @@
+<h1>Web Worker</h1>
+
+<div id="status"></div>
+<button id="stop">Stop</button>
+<script>
+
+    if(!Worker) {
+        $("#status").innerText = "Your browser does not support web workers"
+        return
+    }
+
+    let worker = new Worker("/webworker/index.js") 
+    worker.onmessage = (ev) => {
+        console.log("Index.html: ev", ev)
+    }
+
+    // worker.addEventListener('message', (ev) => {
+    //     console.log("Index.html: ev", ev)
+    // })
+
+    $("#stop").on("click", () => {
+        worker.terminate()
+    })
+</script>

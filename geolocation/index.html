@@ -38,7 +38,9 @@
                 let cors = "https://cors-anywhere.herokuapp.com/"
                 let maps = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBB_pf1WOVGDYQhs8UOvMy1Af9VLl2NGyk&callback=myMap"
                 let url = cors + maps
-                insertScriptFromUrl(url)
+                let proxy = "localhost:5000/google" 
+                insertScriptFromUrl(proxy)
+                myMap()
                 isGoogleMapsApiLoaded = true
             }
             

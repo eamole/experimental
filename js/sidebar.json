@@ -15,6 +15,9 @@
     {"name": "Geolocation", "url": "/geolocation"},
     {"name": "LocalStorage", "url": "/localStorage"},
     {"name": "LocalStorage 2", "url": "/localStorage2"},
-    {"name": "Embedding", "url": "/embedding"}
+    {"name": "Embedding", "url": "/embedding"},
+    {"name": "Timers", "url": "/timers"},
+    {"name": "Web Worker", "url": "/webworker"}
+
 
 ]

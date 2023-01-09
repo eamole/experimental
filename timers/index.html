@@ -1,0 +1,86 @@
+<h1>Timers</h1>
+<h2>Explore How to work with Timers</h2>
+
+<button id="clearTimeout">Clear TimeOut</button>
+<button id="pauseInterval">Pause Interval</button>
+<button id="clearInterval">Clear Interval</button>
+
+<ul>
+    <li>setTimeout</li>
+    <li>clearTimeout</li>
+    <li>setInterval</li>
+    <li>clearInterval</li>
+</ul>
+
+<script>
+    let waitFor = 2000
+    // called once
+    let timer = setTimeout(() => {  // its async, returns instantly
+        console.log(`Timeout: Waited for ${waitFor}ms`)
+    },
+    waitFor)   // wait 1000ms = 1sec
+
+    $("#clearTimeout").on("click", () => {
+        clearTimeout(timer)
+        console.log('pop up cancelled')
+    })
+    console.log('after timeout')
+
+    let interval = {
+
+        start () {
+            this.timerInterval = setInterval(() => {  // its async, returns instantly
+            console.log(`Interval:Waited for ${waitFor}ms`)
+            console.log()
+            },
+            waitFor)   // wait 1000ms = 1sec
+
+        },
+        stop () {
+            clearInterval(this.timerInterval)
+            console.log('interval cancelled')
+        },
+        pause () {
+            this.stop()
+            console.log('interval paused')
+        },
+        restart() {
+            this.start()
+            console.log('interval restarted')
+        }
+
+
+    }
+    // called every waitFor ms
+
+    $("#clearInterval").on("click", () => {
+        interval.stop()
+    })
+
+    $("#pauseInterval").on("click", function () {   // use function syntax to access this
+        // this = the button
+        if(this.innerText == "Pause Interval") {
+            this.innerText = "Restart Interval"
+            interval.pause()
+        } 
+        else {
+            this.innerText = "Pause Interval"
+            interval.restart()
+        }
+    })
+
+    interval.start()
+
+
+    // $("button").click( ()  => {
+    //     $.ajax({ 
+    //         url: "demo_test.txt",
+    //         success (result) {
+    //             $("#div1").html(result)
+    //         }
+    //     })
+    // })
+
+
+
+</script>
