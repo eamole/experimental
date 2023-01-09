@@ -1,11 +1,12 @@
-console.log('products.js')
-if(!window.shoppingCart) window.shoppingCart = {}
-window.shoppingCart.products = [
+// console.log('products.js')
+// if(!window.shoppingCart) window.shoppingCart = {}
+products = [
+
   {
     id: 0,
     name: "T-shirt 1",
     price: 29.99,
-    instock: 100,
+    instock: 1,
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores, error.",
     imgSrc: "./img/t1.png",
@@ -32,7 +33,7 @@ window.shoppingCart.products = [
     id: 3,
     name: "T-shirt 4",
     price: 25.99,
-    instock: 5,
+    instock: 2,
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores, error.",
     imgSrc: "./img/t4.png",
@@ -56,3 +57,7 @@ window.shoppingCart.products = [
     imgSrc: "./img/t6.png",
   },
 ];
+
+exports = {
+  products
+}

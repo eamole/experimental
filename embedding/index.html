@@ -7,12 +7,14 @@
 
         lets create a layout for our proposed Shopping Cart
 -->
+<link rel="stylesheet" href="/static/css/layout.css">
 
 <div class="container">
-    <div id="products">
+    <div class="col-6 col-s-9" id="product-list-container">
         <!-- display our products in here -->
     </div>
-    <div id="cart">
+    <!-- stack on small devices -->
+    <div class="col-3 col-s-12" id="cart-container">    
         <!-- display our cart here - on the right side -->
     </div>
 </div>
@@ -20,17 +22,18 @@
 <style>
     /* create a 2 col layout */
     .container {
+        /* display: grid; */
         display: flex;
         flex-direction: row;
         justify-content: space-between; /* make 2nd column float to right */
     }
-    #products {
-        width:50%;
+    #product-list-container {
+        /* width:50%; */
         height: 100%;
         border: 1px solid red;  /* just to see it */
     }
-    #cart {
-        width:30%;
+    #cart-container {
+        /* width:30%; */
         height:100%;
         border: 1px solid red;  /* just to see it */
         
@@ -38,7 +41,22 @@
 </style>
 
 <script>
-    insertHtmlFromUrl("/embedding/products.html", "#products")
+    // console.log("embedding/index.html: this, loader", this, loader)
+    // insertHtmlFromUrl("/embedding/products.html", "#products", null, this)
+    
+    let { productList, init:initProducts } = await load ("/embedding/products.html", null, this)
+    console.log('productList', productList)
+    
+    let { ShoppingCart } = await load("/embedding/shoppingcart.html", null, this)
+    
+    let shoppingCart = new ShoppingCart("#cart-container")
+    // shoppingCart.render()
+    initProducts("#product-list-container", shoppingCart)
+
+
+
+    
+
 
 </script>
 

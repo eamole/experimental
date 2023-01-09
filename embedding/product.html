@@ -1,1 +1,119 @@
 <!--    use the file to define a Product class and a template to display each product -->
+<div class="clickable product-template" id="product-template">
+    <div class="product-id id" id="product-id">${product.id}</div>
+    <div class="product-image" id="product-imgSrc"><img src="/embedding/${product.imgSrc}" alt=""></div>
+    <div class="product-text-wrapper">
+        <div class="product-name product-text" id="product-name">${product.name}</div>
+        <div class="product-price product-text" id="product-price">${product.price}</div>
+        <div class="product-description product-text" id="product-description">${product.description}</div>
+    </div>
+    
+</div>
+
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Rubik&display=swap");
+
+    .product-template {
+        background-color: #fff;
+        border: 1px solid darkgray;
+        border-radius: 5px ;
+        padding: 2px;
+        margin: 2px;        
+    }
+
+    .product-id {
+        display: none;
+    }
+
+    .product-image > img {
+        width: 100px;
+        margin: auto;
+        display: block;
+    }
+
+    .product-name, .product-price {
+        font-size: larger;
+    }
+    .product-text {
+        font-family: Rubik;
+        padding: 5px;
+        color: white;
+    }
+    .product-price::before {
+        content: "€ "
+    }
+
+    .product-text-wrapper {
+        background-color: #111;
+        border-radius: 5px ;
+    }
+
+
+</style>
+
+<script>
+    // console.log('loading product.html -> template.js -> exports')
+    let { Template } = await load('/static/js/template.js')
+    // console.log('Template Loaded', Template)
+
+    // .then(imports => {
+    // let { Template } = imports
+    /*
+        sample Product object
+        {
+            id: 0,
+            name: "T-shirt 1",
+            price: 29.99,
+            instock: 100,
+            description:
+            "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores, error.",
+            imgSrc: "./img/t1.png",
+        },
+    */
+    class Product {
+        constructor(obj) {
+            Object.assign(this, obj)
+        }
+    }
+
+    class ProductTemplate extends Template {
+        constructor (product) {
+            super('product', product, product.id)
+            this.product = product
+            product.productTemplate = this
+            // we need to re-assign the id's so they are unique in the dom - add the id of the 
+            this.setProperties([ "id", "imgSrc", "name", "price", "description" ])
+            // these really belong in a single method in the template
+            this.mapProperties()
+            this.getValues()
+            this.generateSearchPatterns()
+            this.renderContent()
+            this.createElement()
+            this.changeElementIds()
+            
+            // at this stage we have a HTML block, but we need to change the id's of each element in there
+            // we need to create an element
+
+        }
+
+        // render(product) {
+        //     let template = `
+        //     <div id="product-template">
+        //         <div id="product-imgSrc"><img src="${product.imgSrc}" alt=""></div>
+        //         <div id="product-name">${productName}</div>
+        //         <div id="product-price">${product.price}</div>
+        //         <div id="product-description">${product.description}</div>
+        //     </div>
+        //     `
+        //     return template
+        // }
+    }
+    exports = {
+        Product, ProductTemplate
+    }
+
+// })
+
+
+
+</script>

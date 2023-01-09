@@ -13,5 +13,8 @@
     {"name": "Iframe", "url": "/iframe"},
     {"name": "Image Map", "url": "/image-map"},
     {"name": "Geolocation", "url": "/geolocation"},
-    {"name": "LocalStorage", "url": "/localStorage"}
+    {"name": "LocalStorage", "url": "/localStorage"},
+    {"name": "LocalStorage 2", "url": "/localStorage2"},
+    {"name": "Embedding", "url": "/embedding"}
+
 ]

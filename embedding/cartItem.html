@@ -1,0 +1,168 @@
+<div class="cart-item-template clickable" id="cart-item-template">
+    <div class="cart-item cart-item-id id" id="cart-item-id">${cart-item.id}</div>
+    <div class="cart-item cart-item-image" id="cart-item-img"><img src="/embedding/${cart-item.img}" alt=""></div>
+    <div class="cart-item-text-wrapper">
+        <div class="cart-item cart-item-name cart-item-text" id="cart-item-name">${cart-item.name}</div>
+        <div class="cart-item cart-item-price cart-item-text" id="cart-item-price">${cart-item.price}</div>
+        <div class="cart-item-qty-wrapper">
+            <div class="cart-item cart-item-qty-lower cart-item-text" id="cart-item-qty-lower">-</div>
+            <div class="cart-item cart-item-qty cart-item-text" id="cart-item-qty">${cart-item.qty}</div>
+            <div class="cart-item cart-item-qty-higher cart-item-text" id="cart-item-qty-higher">+</div>    
+        </div>
+        
+    </div>
+    
+</div>
+
+<style>
+
+    .cart-item {
+        display:inline-block;
+
+
+    }
+
+    .cart-item-template {
+        background-color: #111;
+        border: 1px solid darkgray;
+        border-radius: 5px ;
+        padding: 2px;
+        margin: 2px;        
+    }
+    .cart-item-id {
+        display: none;
+    }
+    .cart-item-image {
+        width: 40%;
+    }
+
+    .cart-item-price::before {
+        content: "€ "
+    }
+
+    .cart-item-image > img {
+        width: 40px;
+        margin: auto;
+        display: inline-block;
+    }
+
+    .cart-item-name, .cart-item-price {
+        font-size: smaller;
+    }
+
+    .cart-item-text-wrapper {
+        width:40%;
+        display:inline-block;
+    }
+
+    .cart-item-qty-wrapper {
+        /* width:40%; */
+        display:inline-block;
+
+    }
+
+    .cart-item-text {
+        font-family: Rubik;
+        padding: 2px;
+        color: white;
+    }
+
+    .cart-item-qty-higher, .cart-item-qty-lower {
+        background-color: white;
+        color:black;
+        border-radius:50px;
+    }
+
+
+
+
+</style>
+
+
+<script>
+
+    let { Template } = await load("/static/js/template.js", null, this)
+
+    class CartItemTemplate extends Template {
+        constructor (cartItem, domContentSelector) {
+            super("cart-item", cartItem, cartItem.id, domContentSelector)
+
+            this.setProperties([ "id", "img", "name", "price", "qty", "qty-lower", "qty-higher" ])
+            // these really belong in a single method in the template
+            // this.mapProperties()
+            // this.getValues()
+            // this.generateSearchPatterns()
+            // this.renderContent()
+            // this.createElement()
+            // this.changeElementIds()
+            this.initialRender()
+            this.addClickHandlers()
+
+        }
+
+        addClickHandlers () {
+            this.addClickHandler((ev) => console.log('cart item template: item clicked') )
+            let that = this // save this value
+
+            $$("#cart-item-qty-lower-" + this.id).on('click', function(ev) {
+                ev.stopPropagation()
+                emit('cart-item-decrement', null, {id: that.object.id, qty: that.object.qty})
+                that.object.decrement()
+            })
+            $$("#cart-item-qty-higher-" + this.id).on('click', function(ev) {
+                // if(that.object.qty>0) 
+                ev.stopPropagation()
+                emit('cart-item-increment', null, {id: that.object.id, qty: that.object.qty}, (allow) => {
+                    if(!allow) console.log('Cannot order more than in stock levels')
+                    else that.object.increment()
+                })
+            })
+
+        }
+    }
+
+    // I could have extended the Product class!! - so inherit all the properties
+    class CartItem {
+        constructor(cart, item) {
+            this.cart = cart// the parent
+            this.item = item
+            
+            // it doesn't make too much sense to duplicate all the product properties
+            this.id = item.id
+            this.img = item.imgSrc
+            this.name = item.name 
+            this.qty = 1
+            this.price = item.price
+            // this.value = this.price
+            
+            this.template = new CartItemTemplate(this, "#shopping-cart-items-1")
+        }
+        value () {
+            return this.price * this.qty
+        }
+        update () {
+            this.template.update()
+        }
+
+        increment () {
+            // check stock levels first
+            this.qty++
+            this.update()            
+        }
+        decrement () {
+            if(this.qty>0) this.qty-- // TODO: add back to stock?
+            if(this.qty == 0) this.remove()
+            else this.update()
+            
+        }
+        remove () {
+            // remove from cart list
+            this.cart.remove(this.id)
+        }
+    }
+
+    exports = {
+        CartItem, CartItemTemplate
+    }
+
+</script>

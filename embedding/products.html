@@ -1,20 +1,108 @@
 <!-- <embed src="/embedding/products.js"> lets try embed, see if it works Nope embeds it as text!! -->
 
-<h1>Products</h1>
+<!--
 
-<div id="product-list">
+    by using load, I've made the template invisible at end of body
+    I need to attach the "template" to the canvas
+    maybe an init() exported function takes the canvas element as parent?
+
+-->
+    
+<div id="product-list" class="xxx">
+    <!-- turns out, we have to include our CSS WITHIN the top level element so it gets copied by loader!! -->
+
+    <style type="text/css">
+        h2 {
+            color: green;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+        #products-container {
+            padding: 5px;
+            column-count: 2;
+            column-gap: 2px;
+            background-color: lightgrey;
+            margin: 2px;
+        }
+        
+        @media only screen and (max-width: 800px) {
+            #products-container {
+                column-count: 1;
+                background-color: lightslategray;
+            }
+        }
+    
+    </style>
+    
+    
+    
+    <h2>Products</h2>
+
+    <div id="products-container"></div>
 
 </div>
 
 
 <script>
-    // lets grab the products from the shopping-cart example + images + products.js
-    insertScriptFromUrl("/embedding/products.js", () => {
-        console.log('after script insert!! This is running before the inserted script!!')
-        console.log('products', window.shoppingCart.products)
+    let shoppingCart
+    let productList = {}, templates = {}
+    let { products }  = await load("/embedding/products.js", null, this)
+    let { Product, ProductTemplate } = await load("/embedding/product.html", null, this)
+    
+    let container = $("#products-container")
 
-        // entering into callback hell!! I could simply return a satisfied Promise
-        insertHtmlFromUrl("/embedding/product.html", "#product-list")
+    for(const _product of products) {   // JSON objects
+        
+        product = new Product(_product) // constructor
+        productList[product.id] = product
+        let template = new ProductTemplate(product)
+        template.insertElement(container)
+        templates[product.id] = template
+        // template.addEventhandler('click', addToShoppingCart(product))
+    }
+
+    let makeContentVisible = (domContainerSelector) => {
+
+        let content = $$("#product-list")    // grab the content - use global $$
+        content.parentNode.remove(content)  // not sure removing it is a good idea - unless we store it in template for future use
+        let parent = $$(domContainerSelector)   // use $$ global
+        parent.appendChild(content)
+
+    }
+
+    let clickHandler = function (ev) {  // use function syntax to get this - the element that is clicked
+        // console.log('this, ev, a, b', this, ev, a, b)
+        // the actual element we want is a child of the div ie this
+        let id = this.querySelector(".product-id").innerText  // only 1 element - hopefully!!
+        let product = productList[id]
+        shoppingCart.add(product)
+    }
+
+    let addClickHandlers = () => {
+        for(const key in templates) {
+            let template = templates[key]
+            template.addClickHandler(clickHandler)
+        }
+    }
+    
+    let init = (domContainerSelector, cart) => {
+        makeContentVisible(domContainerSelector)
+        addClickHandlers()
+        shoppingCart = cart
+
+    }
+
+    on('cart-item-increment', (a,b,c,detail) => {
+        let {cargo, responder} = detail
+        let { id, qty } = cargo
+        let product = productList[id]
+        if(product.instock > qty+1) responder(true)
+        else responder(false)
     })
+
+    exports = {
+        productList, init
+    }
 
 </script>

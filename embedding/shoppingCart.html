@@ -1,0 +1,88 @@
+<div id="shopping-cart-template" class="shopping-cart-template">
+    <div id="shopping-cart-header"></div>
+    <div id="shopping-cart-items"></div>
+    <div id="shopping-cart-footer"></div>
+
+</div>
+
+
+
+<script>
+
+    let { CartItem } = await load("/embedding/cartItem.html", null, this)
+    let { Template } = await load("/static/js/template.js", null, this)
+
+    class ShoppingCartTemplate extends Template {
+        constructor (shoppingCart, domContainerSelector) {
+            super('shopping-cart', shoppingCart, 1, domContainerSelector) // only 1 shopping cart
+            this.header = "Shopping Cart"
+            this.items = shoppingCart.items
+            this.footer = "Total"
+            this.setProperties([ "header", "footer", "items" ])
+            // these really belong in a single method in the template
+            // this.mapProperties()
+            // this.getValues()
+            // this.generateSearchPatterns()
+            // this.renderContent()
+            // this.createElement()
+            // this.changeElementIds()
+            // this.makeContentVisible(domContainer)   
+            this.initialRender()         
+        }
+    }
+ 
+    class ShoppingCart {
+        constructor (domContainer) {
+            this.items = {} // use id as key
+            this.template = new ShoppingCartTemplate(this, domContainer)
+        }
+
+        add (item) {
+            let cartItem = this.items[item.id] 
+            if(cartItem) {
+                cartItem.qty++ 
+                cartItem.update()
+            } 
+            else {
+                cartItem = new CartItem(this, item)
+                this.items[item.id] = cartItem
+                // cartItem.render()
+            }
+            // console.log('cart item', cartItem)
+            // cartItem.template.onDataChange('qty')
+            // this.render()
+        }
+        remove (id) {
+            if(!this.items[id]) {
+                console.log(`ShoppingCart.remove(${id}): no such id in cart`)
+                return
+            }
+            // maybe this should just remove the item + all qty
+            // this.items[id].qty --   // decrement add back to stock
+            // if (this.items[id].qty == 0) 
+            let cartItem = this.items[id]  
+            delete this.items[id]   // remove from list
+            cartItem.template.removeElement()
+        }
+
+        initialRender () {
+            super.initialRender()
+
+            let container = $$("#shopping-cart-items")  // neeeds to be global - sadly!!
+            container.innerHTML = ""    // clear it?
+            // console.log('cart container', container)
+            for(const id in this.items) {   // JSON objects
+                let item = this.items[id]
+
+                item.template.insertElement(container)
+                item.template.addClickHandler((ev) => console.log('cart initial render: item clicked', ev))
+            }
+
+        }
+    }
+
+    exports = {
+        ShoppingCart
+    }
+
+</script>

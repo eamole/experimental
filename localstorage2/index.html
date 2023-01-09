@@ -1,0 +1,234 @@
+<button id="addData">Define Data</button>
+<button id="loadData">Load Data</button>
+<button id="saveData">Save Data</button>
+<button id="showData">Show Data</button>
+
+<div id="data"></div>
+
+<script>
+    'use strict'
+
+    // let Person = (name, age) => {
+    //     return {
+    //         name, age,
+    //         toString () {   // magic method- called by JS whenever this object is used in a string context - ie cast object to string
+    //             return JSON.stringify(this)
+    //         }
+    //     }
+    // }
+
+    class Person {
+        name = ""
+        age = 0
+        constructor (obj) {
+            Object.assign(this, obj)
+        }
+
+        toString() {
+            return JSON.stringify(this)
+        }
+        // this static method calls the constructor and returns the new object
+        static factory(name, age) {
+            return new Person({name, age})
+        }
+
+    }
+     
+    class List {
+        constructor () {
+            this.items = {}
+        }
+        setItem (key, item) {
+            this.items[key] = item
+        }
+        getItem (key) {
+            return this.items[key]
+        }
+        removeItem (key) {
+            let item = this.items[key]
+            delete this.items[key]
+            return item
+        }
+        clear () {
+            this.items = {}
+        }
+    }
+    /*
+        lets make a class that looks like a memory list, but is actually stored in LocalStorage
+    */
+    class PersistList extends List {
+        constructor(key) {
+            super()
+            if(!key) throw new Error('PersistList must have a key')
+            this.key = key   // this is where the list object will be stored in localStorage
+        }
+        load () {
+            let data = JSON.parse(localStorage.getItem(this.key))
+            this.items = {} 
+            for(const key in data) {
+                let obj = data[key]
+                this.items[key] = Person(obj.name, obj.age) // recreate the actual correct object, not a plain js obj           
+            }
+        }
+        save () {
+            localStorage.setItem(this.key, JSON.stringify(this.items))
+        }
+    }
+
+    let list = new PersistList("persons")
+    $("#addData").addEventListener('click', (ev) => {
+
+        list.setItem('p1', Person.factory('Andrew', 30))
+        list.setItem('p2', Person.factory('Mary', 30))
+
+        console.log({list})
+
+    })
+    $("#loadData").addEventListener('click', (ev) => {
+        list.load()
+    })
+    $("#saveData").addEventListener('click', (ev) => {
+        list.save()
+    })
+
+    $("#showData").addEventListener('click', (ev) => {
+        let html = "<ul>"
+        for(const key in list.items) {   // same as Object.keys(list) NB use IN (objects) not OF (arrays)
+            let item = list.items[key]
+            console.log({item})
+            html += `<li>${item}</li>`
+        }
+        html += "</ul>"
+        $("#data").innerHTML = html
+    })
+    
+    
+
+
+
+
+
+
+    function scrap () {
+        class ComplicatedPerson {
+            name = ""
+            address = ""
+            postcode = ""
+            age = 0
+            static unpersist() {
+                let json = JSON.parse() // get the basic JSON obj out of storage
+                // "rehydrate"
+                let object = new ComplicatedPerson(json)
+
+            }
+            constructor (obj) {
+                Object.assign(this, obj)
+            }
+            getPostCode () {
+
+            }
+            geoLocate(postcode) {
+
+            }
+            persist () {
+
+            }
+
+        }
+
+
+
+        /*
+            localstorage is a "persisted" object in the global/window namespace
+            it has 3 methods
+            .setItem(key, value) // sets one item
+            .getItem(key)    // gets one item
+            .removeItem(key)    // removes one item
+            .clear()         // clears all
+        */
+
+        let myObject = {}
+        
+        myObject.someProp = 'a value'
+        console.log('myObject', myObject)
+
+        myObject['someProp'] = 'a new value'
+        console.log('myObject', myObject)
+
+        console.log('myObject.someProp', myObject.someProp)
+
+        // to delete a property in JS object
+        // delete myObject["someProp"]
+        // console.log('myObject["someProp"]', myObject["someProp"])
+
+        /*
+            local storage is like that, but it adds 4 methods
+        */
+
+        if(!window.localStorage) {
+            console.error("Your browser does not supprt localStorage")
+            return
+        } 
+        // localStorage.clear()
+        localStorage.setItem('myItem', "This is some data")
+        console.log('localStorage', localStorage)
+        localStorage.setItem('myObject', JSON.stringify(myObject))
+        
+        let myObject2 = localStorage.getItem('myObject')
+        console.log('myObject2', myObject2, typeof(myObject2))
+        
+        // don't forget to parse the value on the way out of localstorage
+        myObject2 = JSON.parse(localStorage.getItem('myObject'))
+        console.log('myObject2', myObject2, typeof(myObject2))
+
+        let Person = (name, age) => {
+            return {
+                // myName: name, myAge: age    // that renames the attrib 
+                name, age,    // that renames the attrib
+
+                // this is the implementation is the base Object
+                // toString () {
+                //     return "[object Object]"
+                // }
+                toString () {   // magic method- called by JS whenever this object is used in a string context - ie cast object to string
+                    return JSON.stringify(this)
+                }
+            }
+        }
+
+        let p = Person('Eamonn', 57)
+        console.log(`person 1 ${p}`, p)
+        localStorage.setItem('person 1', p)
+
+        p = Person("Maria", 32)
+        console.log(`person 2 ${p}`, p)
+        localStorage.setItem('person 2', p)
+
+        // iterate over all the objects in localStorage
+        console.log('All Items in LS')
+        let keys = Object.keys(localStorage)    // all the keys in LS as an array
+        for(const key of keys) {
+            let item = localStorage.getItem(key)
+            // console.log('key, item', key, item)
+            console.log({key, item})  
+        }
+
+        // what if we wanted to get all the people
+        // there's no easy way to extract a subset of keys
+        // therefore, store them together in an array!!
+        let persons = [ 
+            Person('Eamonn', 57),
+            Person("Maria", 32)
+        ] 
+
+        localStorage.setItem('persons', JSON.stringify(persons))
+
+        // let persons2 = localStorage.getItem('persons')
+        let persons2 = JSON.parse(localStorage.persons)
+        console.log({persons2})
+
+
+
+    }
+
+</script>
