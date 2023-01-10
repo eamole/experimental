@@ -18,7 +18,8 @@
     {"name": "Embedding", "url": "/embedding"},
     {"name": "Timers", "url": "/timers"},
     {"name": "Web Worker", "url": "/webworker"},
-    {"name": "Asynch Coding", "url": "/asynch"}
+    {"name": "Asynch Coding", "url": "/asynch"},
+    {"name": "Asynch Coding - Extra", "url": "/asynch2"}
 
 
 ]

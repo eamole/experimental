@@ -1,0 +1,130 @@
+<h1>Async Programming</h1>
+
+<button id="load-image">Load Image</button>
+<button id="load-image2">Load File Async 1</button>
+<button id="load-image3">Load File Async 2</button>
+<button id="load-image4">Load File Sync</button>
+<button id="load-image5">Load File Async(callback)</button>
+
+
+<script>
+
+/*
+    lets convert this code to handle a callback
+*/
+let readerCallback = (callback) => {
+    console.log("fetching file")
+    fetch("/asynch2/desktop.ini")
+    .then( resp => resp.text() )
+    .then( data => {
+        console.log('results of fetch', data)
+        callback(data)
+        // even if I make this data avaiulable as a global variable
+        // how do I signal to outer code, that the data is NOW avaulable??? an event? a callback??
+    })
+    console.log("returning from reader()")
+    return "what"
+}
+// how do I see data from here - ie this outer scope
+document.querySelector("#load-image5").addEventListener('click', () => {
+    console.log("calling readerCallback()")
+    // when can I access the data? how will I know its ready? provide a callback!!
+    let results = readerCallback( (data) => {
+        console.log("This is the callback - data now available", data)
+    })  
+    console.log("reader results", results)
+})
+
+
+
+
+
+/*
+
+    so how do we trun async code into sync code - ie traditional imperative code
+    we use, async/await
+
+*/
+
+let readerSync = async () => {  // tag the func as "async"...then use "await"
+    console.log("fetching file")
+    let response = await fetch("/asynch2/desktop.ini")  // use "await" to block until it responds
+    let data = await response.text()    // also an async - use await
+    console.log('results of fetch', data)
+    console.log("returning from reader()")
+    return data
+}
+
+document.querySelector("#load-image4").addEventListener('click', async () => {
+    console.log("calling reader()")
+    let results = await readerSync()    // to use await, add "async" to the containing function
+    console.log("reader results", results)
+})
+
+
+/*
+    lets convert this code into synch code - see above
+*/
+let reader = () => {
+    console.log("fetching file")
+    fetch("/asynch2/desktop.ini")
+    .then( resp => resp.text() )
+    .then(data => {
+        console.log('results of fetch', data)
+        // even if I make this data avaiulable as a global variable
+        // how do I signal to outer code, that the data is NOW avaulable??? an event? a callback??
+    })
+    console.log("returning from reader()")
+    return "what"
+}
+// how do I see data from here - ie this outer scope
+document.querySelector("#load-image3").addEventListener('click', () => {
+    console.log("calling reader()")
+    let results = reader()  // when can I access the data? how will I know its ready?
+    console.log("reader results", results)
+})
+
+
+
+
+
+
+
+// a smoother way of writng the code below
+document.querySelector("#load-image2").addEventListener('click', () => {
+    console.log("fetching the file")
+    fetch('/asynch2/desktop.ini')
+    .then(response => response.text() ) // this is a method attached to the value returned from fetch (ie a Promise)
+    // very important - arrow functions, simgle line, no need for {} and the expression is returned 
+    .then(data => { // the output of "response.read()" becomes "data" in this function
+        console.log({data})
+    } )    
+
+})
+
+
+document.querySelector("#load-image").addEventListener('click', () => {
+
+    // fetch is new - it uses async/promises
+    console.log("fetching the image")
+    let x = fetch('/asynch2/img/model.png')
+    console.log({x})    // cannot examine the actuall contents of model.png
+    /* 
+        what we get instantly is actually a promise
+        to examine the "results" we need to wait for the promise to go from "pending" to "fulfilled"
+        However, the promise object is handy....it will fire/call the then() method when it is fulifilled
+        So we just need to pass in our function to the then() handler
+    */
+    x.then((data) => {  // this will be called when x is fulfilled, and the result is in "data"
+        console.log("x/fetch is now fulfilled") // this gets executed when image has been fully returned to browser
+    })
+
+    console.log("when does this get run???? immediately after we declare x.then()")
+})
+
+
+
+
+
+
+</script>

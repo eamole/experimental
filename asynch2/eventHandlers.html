@@ -1,0 +1,134 @@
+<h1>Asynch Coding - Extra</h1>
+<div>
+    Async coding is coding that ivokes a function, which retuns immediately
+    but the result of the work happens sometime in the future
+    <br>
+    So we need a mechanism to handle the future result
+    <ul>
+        <li>Callbacks</li>
+        <li>Events</li>
+        <li>Promises</li>
+    </ul>
+    Where we don't know <b>When</b> its going to happen
+    <br>
+    Events are things that might happen
+    <br>
+    Callbacks/Promise: we dont know when it's going to happen (or finish)
+    <div>
+        Callbacks are a more <b>imperative</b> style of programming - more traditional
+    </div>
+    <div>
+        Events were largely created by UI requiresments (eg click), or O/S requirements (eg file deleted, connection requested)
+    </div>
+    <div>
+        Promises are a "new" convention/design paradigm which tries to overcome the drawbacks with
+        callbacks (eg "callback hell" ie severely deep nexting of functions)...ie to flatten the request/response
+        chain into a single level
+    </div>
+</div>
+<button id="load-image">Load Image</button>
+
+<script>
+// function load_image()   // snake case - 90's - 00's
+// function loadImage()    // camel case - 00's - now
+// function LoadImage()    // proper case - Microsoft
+
+// old style coding
+// use this later as a click handler
+// functions statement
+function loadImage (ev) {
+    console.log('Hello from loadImage()', event, this)  // what is "this" in this context, and where does it come from
+}
+// old style DOM element search
+var el = document.getElementById('load-image')
+if(!el) console.error("could not find buttton {load-image}")
+// each DOM element has dozens of on-"something" handlers eg onclick
+// you can assigna function to that "handle" and it will be called when that even fires
+// however, there can only be one at a time, and each one overwrites the previous
+el.onclick = loadImage  // a function is an object, so it can be passed around
+
+// anon func - still using the "function" keyword - NB this overwrites pervious value of .onclick
+el.onclick = function (ev) {
+    console.log("Hello from anon function", ev, this)
+}
+
+// how do we allow the previois handler to co-exist?
+oldHandler = el.onclick // save old handler 
+// NB no declaration (var/let/const), so "oldHandler" defined in global namespace BAD!!
+// and we are creating a problem if someone else depends on a variable called "oldHandler"
+// global scope is the worst default scope EVER!!!!
+el.onclick = function (ev) {
+    console.log("Hello from anon(2) function", ev, this)
+    oldHandler(ev) // pass the event up the handler chain/stack
+}
+/*
+    because we have detached the original handler from the object (button)
+    and stored it in the global namespace (ie window) 
+    "this" inside the function takes on a new value - ie window v button
+    to correctly give the event handler a context, use the func.call() or func.apply()
+
+*/
+el.onclick = function (ev) {
+    console.log("Hello from anon(3) function", ev, this)
+    oldHandler.call(this, ev) // pass in the context of this function to the next - ie the button
+}
+
+/*
+    a better implemenation of a click handler is the 
+    addEventListener - whoch supporst multiple listeners
+    so it doesn't overwrite previous click handlers
+    and it's infinite -
+*/
+
+/*
+    note the use of 
+    $   a convention that has developed and acknowledges jquery's past influence
+    let to declare the variable in scope
+    querySelector - with the # id selector (ie css)
+
+*/
+let $btn = document.querySelector("#load-image")
+/*
+    addEventListener    handles multiple listeners - no overwriting
+    arrow function
+*/
+$btn.addEventListener('click', (ev) => {
+    console.log("Hello from $btn:anon(4) function", ev, this) 
+    // in a non adjusted (ie not Eamonn's) env, "this" would have a value of "window" in an arrow function
+})
+// see how another listener is not destructive to previous - it's additive
+$btn.addEventListener('click', (ev) => {
+    console.log("Hello from $btn:anon(5) function", ev, this) 
+    // in a non adjusted (ie not Eamonn's) env, "this" would have a value of "window" in an arrow function
+})
+// note: by changing from an arrow function syntax to a "fucntion" syntax, "this" gets the correct value
+$btn.addEventListener('click', function (ev) {
+    console.log("Hello from $btn:anon(6) function", ev, this) 
+    // in a non adjusted (ie not Eamonn's) env, "this" would have a value of "window" in an arrow function
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
