@@ -1,0 +1,31 @@
+<div id="status"></div>
+<button id="stop">Stop</button>
+
+<!-- <script>
+    let obj = {
+        tom: "Tom",
+        dick: "Dick",
+        harriet: "Harriet"
+    }
+    console.log(obj)
+
+    // let tom = obj.tom
+    // let dick = obj.dick
+    // destructuring objects
+    let {tom, dick} = obj
+    console.log("tom", tom, "dick", dick)
+
+</script> -->
+
+<script type="module">
+    import {start, stop} from "/modules/clock.js"
+
+    $("#stop").on("click", () => {
+        stop()
+    })
+
+    start((diff) => {
+        $("#status").innerText = diff 
+    }, 100)
+
+</script>

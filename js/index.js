@@ -431,6 +431,8 @@ let extractScriptTags = (container, args) => {
     if(!scripts[0]) return  // if there are no scripts, just return
 
     let jsCode = scripts[0].text    // assume single script TODO: multi scripts
+    let type = scripts[0].type
+    console.log('script type', type)
     // console.log('jsCode', jsCode)
     scripts[0].remove() // avoid duplicate function definitions when inserting again - remove original script from DOM
     let wrapperFunction

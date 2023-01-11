@@ -1,0 +1,57 @@
+<h1>Transitions</h1>
+
+<div id="button1">Transition</div>
+<div class="money">400</div>
+<style>
+    #canvas {
+        background-color:aliceblue;
+    }
+
+    h1::first-letter {
+        font-size:x-large;
+    }
+
+    h1::first-letter:hover {
+        color:red;
+    }
+
+
+    #button1 {
+        width:60px;
+        height:40px;
+        background-color: chartreuse;
+        margin: 5px;
+        border-radius: 5px;
+        text-align: center;
+        opacity: 50%;
+
+        transition-property: width,height,transform,background-color,font-size,opacity;
+        transition-duration: 1s,1s,1s,1s,1s,1s;
+    }
+
+    #button1:hover {
+        width: 100px;
+        height:70px;
+        background-color: chocolate;
+        font-size:x-large;
+        opacity:100%;
+    }
+
+
+    .money::before {
+        content: "€ "
+    }
+
+    
+</style>
+
+<script>
+    // $("h1").on("transitionend", (ev) => {
+    //     console.log('transition end (1)', this, ev) // window
+    // })
+
+    $("#button1").on("transitionend", function (ev){
+        console.log('transition end (2)', this, ev)
+    })
+
+</script>

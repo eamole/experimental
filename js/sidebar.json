@@ -17,9 +17,13 @@
     {"name": "LocalStorage 2", "url": "/localStorage2"},
     {"name": "Embedding", "url": "/embedding"},
     {"name": "Timers", "url": "/timers"},
+    {"name": "Clock", "url": "/clock"},
     {"name": "Web Worker", "url": "/webworker"},
     {"name": "Asynch Coding", "url": "/asynch"},
-    {"name": "Asynch Coding - Extra", "url": "/asynch2"}
+    {"name": "Asynch Coding - Extra", "url": "/asynch2"},
+    {"name": "Modules", "url": "/modules"},
+    {"name": "Transitions", "url": "/transitions"},
+    {"name": "SVG", "url": "/svg"}
 
 
 ]

@@ -1,0 +1,30 @@
+<h1>Clock</h1>
+
+<div id="clock"></div>
+<button id="stop">Stop</button>
+
+<style>
+    #id {
+        color: red;
+    }
+
+</style>
+
+<script>
+    let start = Date.now()
+    let clock = $("#clock")
+
+    let timer = setInterval(() => {
+        let now = Date.now()
+        let diff = now - start
+        // diff = Math.round(diff/1000) // seconds
+        diff = (diff/1000) // seconds
+        clock.innerText = diff + " seconds"
+    },
+    10)   // call every 1000ms = 1sec 10ms = 1/100 sec
+
+    $("#stop").on("click", () => {
+        clearInterval(timer)
+    })
+
+</script>
