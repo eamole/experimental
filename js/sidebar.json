@@ -24,7 +24,8 @@
     {"name": "Modules", "url": "/modules"},
     {"name": "Transitions", "url": "/transitions"},
     {"name": "Animation", "url": "/animation"},
-    {"name": "SVG", "url": "/svg"}
+    {"name": "SVG", "url": "/svg"},
+    {"name": "Proxy", "url": "/proxy"}
 
 
 ]

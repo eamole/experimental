@@ -1,0 +1,78 @@
+<h1>Javascript Proxy</h1>
+<div>
+    
+    https://www.javascripttutorial.net/es6/javascript-proxy/
+
+    A javascript proxy is an object that wraps another object, and intercepts all the internal 
+    calls
+    methods
+    accessors
+    of the wrapped object
+    <br>
+    this allows one to monitor an object and react when an object changes
+</div>
+<!-- my template -->
+Name<input type="text" id="name-element" data-obj="myData" data-prop="name">
+City <input id="city-element"></input>
+
+<button id="change">Change</button>
+<script>
+    // when the object changes, change the DOM
+    let objectToDomMapping = {
+        "name" : "name-element",
+        "city" : "city-element"
+    }
+    // when the DOM changes - update to object
+    let domToObjMapping = {
+        "name-element": "name",
+        "city-element" : "city"
+    }
+    let handler = {
+        get (target, prop) {
+            console.log('Proxy Reading', target, prop, target[prop])
+            return target[prop]
+        },
+        set (target, prop, newValue) {
+            console.log('Proxy Writing', target, prop, target[prop], newValue)
+            target[prop] = newValue
+            // if there is a mapping for this property, update the DOM
+            if(objectToDomMapping[prop]) {
+                let sel = objectToDomMapping[prop]  // "name-element"
+                let el = $("#" + sel)
+                el.value = newValue
+            }
+        }
+
+
+    }
+    // watch objects that we are interested in
+    let watch = (obj) => {
+        return new Proxy(obj, handler)
+    }
+
+
+    let myData = {
+        name: "Eamonn",
+        city: "Cork"
+    }
+
+    myData = watch(myData)
+
+    console.log('myData.name', myData.name)
+    myData.name = "Mary"
+    console.log('myData.name', myData.name)
+
+    $("#change").on("click", ()=> {
+        myData.name = "Guess Who?"
+    })
+
+    $("#name-element").addEventListener("change", function () { // func syntax for this
+        console.log("changed")
+        let prop = domToObjMapping[this.id]
+        myData[prop] = this.value // binding the new inout value back into the object
+        console.log('OnChange:new object value', myData)
+    })
+
+
+
+</script>
