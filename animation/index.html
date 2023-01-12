@@ -1,0 +1,52 @@
+<h1>Animation</h1>
+
+<div id="anim1">This is an animation</div>
+<div id="anim2">This is another animation</div>
+
+<style>
+/* name the animation ef example */
+@keyframes example {    
+    from {background-color: red;} /* rgb {100%,0%,0%}    dec {255, 0, 0} hex{ FF, 0, 0}*/
+    to {background-color: yellow;}  /* rgb{{100%, 100%, 0%}} dec {255, 255, 0} hax {ff, ff, 0}*/
+}
+
+/* general style */ 
+#anim1, #anim2 {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+}
+/* animation specific */
+#anim1 {
+    animation-name: example; /* which keyframes */
+    animation-duration: 4s; /* how long? */
+}
+
+#anim2 {
+    position: relative;
+}
+/* animation specific */
+#anim2 {
+    animation-name: example2; /* which keyframes */
+    animation-duration: 4s; /* how long? */
+    animation-iteration-count: 2;
+    animation-direction:alternate-reverse;
+    animation-fill-mode: both;
+}
+
+@keyframes example2 {
+    0%   {background-color: red; left:0px; top:0px;}
+    25%  {background-color: yellow; left:200px; top:0px;} 
+    50%  {background-color: blue; left:0px; top:200px;}
+    100% {background-color: green; left:-200px; top:0px;}
+}
+
+</style>
+
+<script>
+    console.log("is this running?")
+    $("#anim1").on("transitionend", (ev) => {
+        console.log("#anim1", ev)
+    })
+
+</script>

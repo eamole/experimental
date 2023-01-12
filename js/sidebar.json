@@ -23,6 +23,7 @@
     {"name": "Asynch Coding - Extra", "url": "/asynch2"},
     {"name": "Modules", "url": "/modules"},
     {"name": "Transitions", "url": "/transitions"},
+    {"name": "Animation", "url": "/animation"},
     {"name": "SVG", "url": "/svg"}
 
 
